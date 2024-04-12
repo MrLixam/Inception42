@@ -1,13 +1,12 @@
 FROM debian:11
 
 RUN apt-get update \
-	&& apt-get upgrade -y \
-	&& apt-get install mariadb-server -y
+	&& apt-get install -y mariadb-server
 
-COPY conf/my.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
+COPY conf/my.cnf	/etc/mysql/mariadb.conf.d/my.cnf
 
 COPY tools/build.sh /build.sh
+COPY tools/entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT ["bash", "build.sh"]
-
+ENTRYPOINT ["bash", "entrypoint.sh"]
 EXPOSE 3306
