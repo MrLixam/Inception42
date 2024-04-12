@@ -1,16 +1,17 @@
 FROM debian:11
 
-RUN apt-get update && apt-get install -y nginx openssl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+	&& apt-get install -y nginx openssl && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /etc/nginx/ssl
 
-RUN openssl -x509 -nodes -days 1000 -newkey rsa:2048 \
+RUN openssl req -x509 -nodes \
 	-keyout /etc/nginx/ssl/nginx.key \
 	-out /etc/nginx/ssl/nginx.crt \
-	-subj "/C=FR/O=/OU=Seekers/CN=lvincent.42.fr"
+	-subj "/C=FR/ST=Charente/L=Angouleme/O=42/OU=Seekers/CN=lvincent.42.fr/UID=lvincent"
 
 COPY config/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 443
 
-CMD ["nginx", "-g", "daemon off"]
+CMD ["nginx", "-g", "daemon off;"]
