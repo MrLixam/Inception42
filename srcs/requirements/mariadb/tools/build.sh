@@ -1,22 +1,24 @@
 #!/bin/bash
 
-# Initialize the data directory
-mysql_install_db --user=mysql --ldata=/var/lib/mysql
+mysql_install_db
 
-# Start MariaDB in the background for initial setup
-mysqld_safe &
+service mariadb start;
 
-# Wait for MariaDB to start
-sleep 5
+DB_EXISTS=$(mysql -u root --password=$SQL_ROOT_PWD -e "SHOW DATABASES LIKE '${SQL_DB}';" | grep ${SQL_DB})
 
-# Perform initial setup
-mysql -u root --password=$SQL_ROOT_PWD -e "CREATE DATABASE IF NOT EXISTS $SQL_DB;"
-mysql -u root --password=$SQL_ROOT_PWD -e "DROP USER IF EXISTS '$SQL_USER'@'%'; FLUSH PRIVILEGES;"
-mysql -u root --password=$SQL_ROOT_PWD -e "CREATE USER '$SQL_USER'@'%' IDENTIFIED BY '$SQL_USER_PWD';"
-mysql -u root --password=$SQL_ROOT_PWD -e "GRANT ALL ON $SQL_DB.* TO '$SQL_USER'@'%'; FLUSH PRIVILEGES;"
+if [ -n "$DB_EXISTS" ]; then
+	echo "Mariadb $SQL_DB database exists."
+else
+	echo "Mariadb $SQL_DB database does not exist."
+	mysql -u root --password=$SQL_ROOT_PWD -e "CREATE DATABASE $SQL_DB;"
+	mysql -u root --password=$SQL_ROOT_PWD -e "DROP USER IF EXISTS '$SQL_USER'@'%' ;"
+	mysql -u root --password=$SQL_ROOT_PWD -e "FLUSH PRIVILEGES;"
+	mysql -u root --password=$SQL_ROOT_PWD -e "CREATE USER '$SQL_USER'@'%' IDENTIFIED BY '$SQL_USER_PWD'"
+	mysql -u root --password=$SQL_ROOT_PWD -e "ALTER USER '${SQL_USER}'@'%' IDENTIFIED BY '${SQL_USER_PWD}';"
+	mysql -u root --password=$SQL_ROOT_PWD -e "FLUSH PRIVILEGES;"
+	mysql -u root --password=$SQL_ROOT_PWD -e "GRANT ALL ON $SQL_DB.* TO '$SQL_USER'@'%' IDENTIFIED BY '$SQL_USER_PWD' WITH GRANT OPTION;"
+	mysql -u root --password=$SQL_ROOT_PWD -e "FLUSH PRIVILEGES;"
+	mysql -u root --password=$SQL_ROOT_PWD -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$SQL_ROOT_PWD';"
+fi
 
-# Shutdown the background MariaDB
 mysqladmin -u root --password=$SQL_ROOT_PWD shutdown
-
-# Start MariaDB in the foreground
-exec mysqld

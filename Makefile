@@ -14,7 +14,10 @@ clean:
 	-docker image rm -f `docker image ls -aq`
 	-docker network rm -f `docker network ls -q`
 	-docker builder prune --all --force
-	@sudo rm -rf ~/data/wp/ ~/data/db
+	@sudo rm -rf ~/data/wordpress/ ~/data/mariadb
+
+clean-volumes:
+	@docker volume rm -f ~/data/wordpress ~/data/mariadb
 
 reset: clean all
 

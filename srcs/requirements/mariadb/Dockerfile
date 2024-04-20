@@ -17,3 +17,5 @@ RUN chmod +x /run/mariadb/build.sh
 
 RUN mkdir  -p /var/log/mariadb && touch /var/log/mariadb/error.log
 ENTRYPOINT ["bash", "/run/mariadb/build.sh"]
+
+CMD ["mysqld"]
