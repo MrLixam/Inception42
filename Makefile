@@ -16,8 +16,8 @@ clean:
 	-docker builder prune --all --force
 	@sudo rm -rf ~/data/wp/ ~/data/db
 
-re: down all
-
 reset: clean all
 
-.PHONY: all down clean re reset
+restart: down all
+
+.PHONY: all down clean reset restart
