@@ -6,8 +6,6 @@ until mysql -h mariadb -u $SQL_USER --password=$SQL_USER_PWD -e ";" ; do
     sleep 2
 done
 
-ls /var/www/wordpress | grep "php"
-
 if [ ! -f /var/www/wordpress/wp-config.php ]; then
     echo "Installing WordPress..."
     wp.phar core download --allow-root --path='/var/www/wordpress'
@@ -22,3 +20,4 @@ if [ ! -d /run/php ]; then
  	mkdir -p /run/php
 fi
 chown www-data:www-data /run/php
+php-fpm7.4 -F

@@ -16,5 +16,3 @@ COPY tools/build.sh /build.sh
 EXPOSE 9000
 
 ENTRYPOINT ["bash", "build.sh"]
-
-CMD ["php-fpm7.4", "-F"]
