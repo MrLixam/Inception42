@@ -22,4 +22,4 @@ fi
 
 mysqladmin -u root --password=${SQL_ROOT_PWD} shutdown
 
-mysqld
+exec mysqld
